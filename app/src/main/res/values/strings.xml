@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ChangeTheme</string>
+    <string name="action_settings">主题切换</string>
+</resources>
