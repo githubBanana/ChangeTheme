@@ -6,17 +6,24 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
+
 public class MainActivity extends AppCompatActivity {
+
+    private static String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        EventBus.getDefault().register(this);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,16 +78,33 @@ public class MainActivity extends AppCompatActivity {
         mGv.setCacheColorHint(0);
         mGv.setAdapter(mAdapter);
         mAdapter.addAll(mList);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("主题选择");
+        builder.setView(mGv);
+        final AlertDialog dialog = builder.show();
+
+
         mGv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+                dialog.dismiss();
+                ThemeUtil.Theme theme = ThemeUtil.Theme.positonToTheme(i);
+                ThemeUtil.changeTheme(MainActivity.this,theme);
+                EventBus.getDefault().post("sds");
             }
         });
+    }
 
-        new AlertDialog.Builder(MainActivity.this).setTitle("主题选择")
-                .setView(mGv)
-                .show();
+    @Subscribe
+    public void onEvent(String a) {
+        Log.e(TAG, "onEvent: "+a );
+        this.recreate();
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }
