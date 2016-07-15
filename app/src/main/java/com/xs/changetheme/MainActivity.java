@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,10 +26,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeUtil.Theme theme = ThemeUtil.getCurrTheme(MainActivity.this);
+        ThemeUtil.changeTheme(MainActivity.this,theme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        setSupportActionBar(toolbar);
         EventBus.getDefault().register(this);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 dialog.dismiss();
+                PreferenceUtils.getInstance(MainActivity.this).saveParam(ThemeUtil.TAG,i);
                 ThemeUtil.Theme theme = ThemeUtil.Theme.positonToTheme(i);
                 ThemeUtil.changeTheme(MainActivity.this,theme);
                 EventBus.getDefault().post("sds");

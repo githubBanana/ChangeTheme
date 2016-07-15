@@ -1,6 +1,7 @@
 package com.xs.changetheme;
 
 import android.app.Activity;
+import android.content.Context;
 
 /**
  * @version V1.0 <描述当前版本功能>
@@ -9,7 +10,8 @@ import android.app.Activity;
  * @email Xs.lin@foxmail.com
  */
 public class ThemeUtil {
-    private static final String TAG = "ThemeUtil";
+
+    public static final String TAG = "ThemeUtil";
     public static void changeTheme(Activity activity,Theme theme ) {
 
         if (activity == null)
@@ -28,6 +30,12 @@ public class ThemeUtil {
         }
         activity.setTheme(style);
     }
+
+     public static Theme getCurrTheme(Context context) {
+         int value = PreferenceUtils.getInstance(context).getIntParam(ThemeUtil.TAG);
+         ThemeUtil.Theme theme = ThemeUtil.Theme.positonToTheme(value);
+         return theme;
+     }
 
     public enum Theme {
         RED(0),
